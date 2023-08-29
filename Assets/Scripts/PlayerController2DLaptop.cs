@@ -21,14 +21,15 @@ public class PlayerController2DLaptop : MonoBehaviour
     //private float _lockedTill;
     //private bool _jumpTriggered;
 
-    private void Awake() {
+    private void Awake() 
+    {
+        playerRb = GetComponent<Rigidbody2D>();  
         _anim = GetComponent<Animator>(); 
         //_renderer = GetComponent<SpriteRenderer>(); // from tarodev 
     }
 
     void Start()
     {
-        playerRb = GetComponent<Rigidbody2D>();  
         Physics.gravity *= gravityModifier;
     }
 
@@ -36,20 +37,28 @@ public class PlayerController2DLaptop : MonoBehaviour
     {
         BoundariesPlayer();
 
+        //main movement
         float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical"); 
         
-        playerRb.AddForce(Vector3.forward * speed * verticalInput);
-        playerRb.AddForce(Vector3.right * speed * horizontalInput);
+		//_moveInput.x = Input.GetAxisRaw("Horizontal"); //for consideration, Dawnosaur
+		//_moveInput.y = Input.GetAxisRaw("Vertical");
+
+        WalkPromethean();
 
         if (horizontalInput != 0) {
-            
             Debug.Log("I detect movement"); 
         }        
 
-        Jumpman();  
-
-
+        Jumpman();  //due to this behavior, may be renamed to flyman. 
+        if (playerRb.velocity.y < 0) 
+        {
+            Debug.Log("I think I'm falling or stopped"); 
+        }
+        if (playerRb.velocity.y = 0) 
+        {
+            Debug.Log("I think I'm stopped"); 
+        }   
 
         //Animations Go
         //var state = GetState();
@@ -64,42 +73,12 @@ public class PlayerController2DLaptop : MonoBehaviour
 
     }
     
-
-    //private int GetState() {
-        //if (Time.time < _lockedTill) return _currentState;
-
-        // Priorities
-        //if (_landed) return LockState(Land, _landAnimDuration);
-        //if (_jumpTriggered) return Jump;
-
-        //if (_grounded) return _player.Input.x == 0 ? Idle : Walk; //wtf
-        //I should be able to replace the _player.input.x with what im currently pulling 
-
-        
-        //return playerRb.velocity.y > 0 ? Jump : Fall; //it works
-        //return Jump;
-
-        // same with here 
-
-        //int LockState(int s, float t) {
-        //    _lockedTill = Time.time + t;
-        //    return s;
-        //}
-    //}
-
-    //#region Cached Properties
-
-    //private int _currentState;
-
-    //private static readonly int Idle = Animator.StringToHash("Idle");
-    //private static readonly int Walk = Animator.StringToHash("Walk");
-    //private static readonly int Jump = Animator.StringToHash("Jump");
-    //private static readonly int Fall = Animator.StringToHash("Fall");
-    //private static readonly int Land = Animator.StringToHash("Land");
-
-    //#endregion
-
-    private void Jumpman(){
+    private void WalkPromethean() {
+        playerRb.AddForce(Vector3.forward * speed * verticalInput);
+        playerRb.AddForce(Vector3.right * speed * horizontalInput);
+    }
+    private void Jumpman()
+    {
         if (Input.GetKey(KeyCode.Space) ) {
 
             playerRb.AddForce(Vector3.up * floatForce); // add ForceMode2D.Impulse and test results 
@@ -144,4 +123,40 @@ public class PlayerController2DLaptop : MonoBehaviour
         }
 
     }
+
+    
+
+    //private int GetState() {
+        //if (Time.time < _lockedTill) return _currentState;
+
+        // Priorities
+        //if (_landed) return LockState(Land, _landAnimDuration);
+        //if (_jumpTriggered) return Jump;
+
+        //if (_grounded) return _player.Input.x == 0 ? Idle : Walk; //wtf
+        //I should be able to replace the _player.input.x with what im currently pulling 
+
+        
+        //return playerRb.velocity.y > 0 ? Jump : Fall; //it works
+        //return Jump;
+
+        // same with here 
+
+        //int LockState(int s, float t) {
+        //    _lockedTill = Time.time + t;
+        //    return s;
+        //}
+    //}
+
+    //#region Cached Properties
+
+    //private int _currentState;
+
+    //private static readonly int Idle = Animator.StringToHash("Idle");
+    //private static readonly int Walk = Animator.StringToHash("Walk");
+    //private static readonly int Jump = Animator.StringToHash("Jump");
+    //private static readonly int Fall = Animator.StringToHash("Fall");
+    //private static readonly int Land = Animator.StringToHash("Land");
+
+    //#endregion
 }
